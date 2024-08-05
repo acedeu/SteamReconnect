@@ -1,3 +1,2 @@
-# SteamReconnect
-
-Reconnects your server to steam if the original reconnect method fails.
+# Steam Reconnect
+Every Tuesday steam does its weekly maintenance and 65% of the time your server reconnects to steam but the other 35% it doesn't reconnect so thats why this plugin will solve that issue it does a check every 60 seconds and if your server isn't connected to steam then it will reconnect it!
