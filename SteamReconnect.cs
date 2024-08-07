@@ -1,24 +1,27 @@
-﻿using JetBrains.Annotations;
+using HarmonyLib;
+using Oxide.Core;
 using Oxide.Core.Plugins;
+using Rust.Platform.Steam;
 using Steamworks;
 
 namespace Oxide.Plugins
 {
-    [Info("SteamReconnect", "aced", "1.0.0")]
-    [Description("If the server loses connection to Steam, it will attempt to reconnect every 60 seconds.")]
+    [Info("SteamReconnect", "aced", "1.0.1")]
+    [Description("If the server loses connection to Steam, it will reconnect.")]
     public class SteamReconnect : RustPlugin
     {
-        [UsedImplicitly]
-        [HookMethod(nameof(Init))]
-        private void Init()
+        [AutoPatch]
+        [HarmonyPatch(typeof(SteamPlatform), "OnSteamConnectionFailure")]
+        public static class ReconnectPatch
         {
-            timer.Every(60f, () =>
+            [HarmonyPostfix]
+            public static void PostFix(ref bool stilltrying)
             {
-                if (SteamServer.LoggedOn == false)
+                if (stilltrying == false)
                 {
-                    SteamServer.LogOnAnonymous();
+                    Interface.Oxide.GetLibrary<Oxide.Core.Libraries.Timer>().Repeat(30f, 0, SteamServer.LogOnAnonymous);
                 }
-            });
+            }
         }
     }
 }
